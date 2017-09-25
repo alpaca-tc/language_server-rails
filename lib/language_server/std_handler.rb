@@ -26,9 +26,8 @@ module LanguageServer
         end
 
         next unless content = buffer.try_read_content(next_message_length)
-        require 'pry-remote'
-        binding.remote_pry
         next_message_length = nil
+
         process(app, content)
       end
     end
