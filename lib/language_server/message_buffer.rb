@@ -16,7 +16,7 @@ module LanguageServer
     end
 
     def append(chunk)
-      chunk = chunk.force_encoding(@encoding)
+      chunk = chunk.encode(@encoding)
 
       @buffer += chunk
       @index  += chunk.bytesize
