@@ -2,6 +2,7 @@
 
 require 'rack'
 require 'rack/request'
+require 'language_server-protocol'
 
 module LanguageServer
   class JsonRPCMiddleware
@@ -13,20 +14,26 @@ module LanguageServer
 
     def call(env)
       request = Rack::Request.new(env)
+      json_body = {}
 
       begin
-        parse_body(request)
-      rescue JSONError
-        return [500, {}, { code: '-32700' }]
+        json_body = parse_body(request)
+      rescue JSONError => error
+        return build_error(status: 500, id: body[:id], code: -32700, message: error.to_s)
       end
 
       begin
-        _status, headers, body = @app.call(env)
+        status, headers, body = @app.call(env)
         [200, headers, body]
+      rescue MethodNotFound => error
+        return build_error(
+          status: 404,
+          id: json_body[:id],
+          code: LanguageServer::Protocol::Constant::ErrorCodes::METHOD_NOT_FOUND,
+          message: error.to_s
+        )
         # rescue InvalidRequest
         #   return [400, {}, { code: '-32600' }]
-        # rescue MethodNotFound
-        #   return [404, {}, { code: '-32601' }]
         # rescue InvalidParams
         #   return [500, {}, { code: '-32602' }]
         # rescue
@@ -37,6 +44,21 @@ module LanguageServer
     end
 
     private
+
+    def build_error(status:, id:, code:, message:)
+      # FIXME: fixes response
+      return [500, {}, [{ error: { code: code, message: message } }.to_json]] unless id
+
+      result = LanguageServer::Protocol::Interface::ResponseMessage.new(
+        id: id,
+        error: {
+          code: code,
+          message: message
+        }
+      )
+
+      [status, {}, [result.to_json]]
+    end
 
     def parse_body(request)
       rack_input = request.get_header(Rack::RACK_INPUT)
