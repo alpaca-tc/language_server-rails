@@ -2,6 +2,9 @@
 
 require 'bundler/setup'
 require 'language_server_json'
+require 'pry' unless ENV['CI']
+
+Dir[File.join(File.expand_path('../support', __FILE__), '**', '*.rb')].each { |file| require(file) }
 
 RSpec.configure do |config|
   config.order = :random
