@@ -25,9 +25,17 @@ RSpec.describe LanguageServerJson::Application do
   end
 
   describe 'InstanceMethods' do
+    let(:instance) { described_class.new(params) }
+
     describe '#process' do
-      pending 'returns response' do
-        is_expected.to be_a(String)
+      subject { instance.process }
+
+      context 'initialize' do
+        let(:params) { jsonrpc_fixture('initialize/jsonrpc.json') }
+
+        it 'returns response' do
+          is_expected.to be_a(String)
+        end
       end
     end
   end

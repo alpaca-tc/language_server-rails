@@ -5,7 +5,7 @@ require 'pathname'
 Module.new do
   def jsonrpc_fixture(path)
     jsonrpc_path = jsonrpc_fixture_path.join(path)
-    JSON.parse(File.read(jsonrpc_path))
+    JSON.parse(File.read(jsonrpc_path), symbolize_names: true)
   end
 
   def jsonrpc_request_fixture(path)

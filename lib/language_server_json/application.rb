@@ -19,13 +19,17 @@ module LanguageServerJson
     end
 
     def process
-      require 'pry'
-      binding.remote_pry
-      # case @params[:method]
-      # when 'initialize'
-      #   InitializeService.new()
-      # else
-      # end
+      LanguageServer.logger.debug("in: #{@params}")
+
+      response = case @params[:method]
+                 when 'initialize'
+                   Service::InitializeService.new(@params).do_initialize
+                 else
+                   raise NotImplementedError, "not supported method given #{@params[:method]}"
+                 end
+
+      LanguageServer.logger.debug("out: #{response.to_json}")
+      response.to_json
     end
   end
 end
