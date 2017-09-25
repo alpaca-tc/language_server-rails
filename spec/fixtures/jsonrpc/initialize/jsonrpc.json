@@ -1,0 +1,12 @@
+{
+  "method": "initialize",
+  "id": 0,
+  "params": {
+    "capabilities": {},
+    "processId": 44545,
+    "rootPath": "/Users/alpaca-tc/src/language_server-json",
+    "trace": "verbose",
+    "rootUri": "file:///Users/alpaca-tc/src/language_server-json"
+  },
+  "jsonrpc": "2.0"
+}
