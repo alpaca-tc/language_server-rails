@@ -1,11 +1,12 @@
-require "bundler/setup"
-require "language_server/json"
+require 'bundler/setup'
+require 'language_server'
+require 'language_server_json'
 
 RSpec.configure do |config|
-  # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = ".rspec_status"
-
-  # Disable RSpec exposing methods globally on `Module` and `main`
+  config.order = :random
+  config.raise_errors_for_deprecations!
+  config.profile_examples = 10
+  config.example_status_persistence_file_path = '.rspec_status'
   config.disable_monkey_patching!
 
   config.expect_with :rspec do |c|
