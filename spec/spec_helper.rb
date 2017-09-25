@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
-require 'language_server'
 require 'language_server_json'
 
 RSpec.configure do |config|
