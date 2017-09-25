@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe LanguageServer::MessageBuffer do
   let(:instance) { described_class.new }
   let(:jsonrpc_request) { jsonrpc_request_fixture('initialize/jsonrpc.json') }

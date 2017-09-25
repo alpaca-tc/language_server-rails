@@ -5,8 +5,6 @@ require 'rack/utils'
 require 'rack/content_length'
 require 'rack/handler/cgi'
 
-require 'language_server/message_buffer'
-
 module LanguageServer
   # TODO: Rename name. StdHandler is not easy to understand
   class StdHandler < Rack::Handler::CGI
@@ -27,12 +25,11 @@ module LanguageServer
           next_message_length = headers[Rack::CONTENT_LENGTH].to_i
         end
 
-        if content = buffer.try_read_content(next_message_length)
-          require 'pry-remote'
-          binding.remote_pry;
-          next_message_length = nil
-          process(app, content)
-        end
+        next unless content = buffer.try_read_content(next_message_length)
+        require 'pry-remote'
+        binding.remote_pry
+        next_message_length = nil
+        process(app, content)
       end
     end
 

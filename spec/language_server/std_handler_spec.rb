@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'language_server/std_handler'
 
 RSpec.describe LanguageServer::StdHandler do

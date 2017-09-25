@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe LanguageServer::JsonRPCMiddleware do
   describe 'InstanceMethods' do
     let(:instance) { described_class.new(rack_application) }
