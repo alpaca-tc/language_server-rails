@@ -7,6 +7,8 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 # Specify your gem's dependencies in language_server-json.gemspec
 gemspec
 
+gem 'language_server-protocol', path: '../language_server-protocol-ruby'
+
 group :development do
   gem 'rubocop'
   gem 'guard'

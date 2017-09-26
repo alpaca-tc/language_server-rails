@@ -19,17 +19,30 @@ module LanguageServerJson
     end
 
     def process
-      LanguageServer.logger.debug("in: #{@params}")
-
-      response = case @params[:method]
+      result = case @params[:method]
                  when 'initialize'
                    Service::InitializeService.new(@params).do_initialize
+                 when 'textDocument/hover'
+                   Service::HoverService.new(@params).do_hover
+                 when 'exit'
+                   exit
+                 when 'textDocument/didChange', 'textDocument/didSave'
+                   raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"
                  else
-                   raise NotImplementedError, "not supported method given #{@params[:method]}"
+                   raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"
                  end
 
-      LanguageServer.logger.debug("out: #{response.to_json}")
-      response.to_json
+      response_message = LanguageServer::Protocol::Interface::ResponseMessage.new(
+        id: @params[:id],
+        result: result
+      )
+
+      response_message.attributes.merge(jsonrpc: "2.0").to_json.tap do |body|
+        LanguageServer.logger.debug("out: #{body}")
+      end
+    rescue => error
+      LanguageServer.logger.debug("error!!!: #{error}")
+      raise
     end
   end
 end
