@@ -20,17 +20,17 @@ module LanguageServerJson
 
     def process
       result = case @params[:method]
-                 when 'initialize'
-                   Service::InitializeService.new(@params).do_initialize
-                 when 'textDocument/hover'
-                   Service::HoverService.new(@params).do_hover
-                 when 'exit'
-                   exit
-                 when 'textDocument/didChange', 'textDocument/didSave'
-                   raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"
-                 else
-                   raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"
-                 end
+               when 'initialize'
+                 Service::InitializeService.new(@params).do_initialize
+               when 'textDocument/hover'
+                 Service::HoverService.new(@params).do_hover
+               when 'exit'
+                 exit
+               when 'textDocument/didChange', 'textDocument/didSave'
+                 raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"
+               else
+                 raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"
+               end
 
       response_message = LanguageServer::Protocol::Interface::ResponseMessage.new(
         id: @params[:id],
