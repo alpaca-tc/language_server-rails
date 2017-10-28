@@ -37,7 +37,7 @@ module LanguageServerRails
         result: result
       )
 
-      response_message.attributes.merge(jsonrpc: "2.0").to_json.tap do |body|
+      response_message.attributes.merge(jsonrpc: '2.0').to_json.tap do |body|
         LanguageServer.logger.debug("out: #{body}")
       end
     rescue => error

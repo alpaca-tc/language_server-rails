@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LanguageServerRails
   module Service
     autoload :BaseService, 'language_server_rails/service/base_service'

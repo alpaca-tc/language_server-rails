@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LanguageServerRails
   module Service
     class InitializeService < BaseService

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LanguageServerRails
   module Service
     class HoverService < BaseService
@@ -5,7 +7,7 @@ module LanguageServerRails
         require 'pry-remote'
         uri_str = params.dig(:params, :textDocument, :uri)
         content = Content.new(uri_str)
-        binding.remote_pry;
+        binding.remote_pry
 
         Interface::Hover.new(
           contents: 'hello contents',
@@ -32,7 +34,7 @@ module LanguageServerRails
       def exists?
         case @uri.scheme
         when 'file'
-          File.exists?(@uri.path)
+          File.exist?(@uri.path)
         else
           raise NotImplementedError, 'not implemented yet'
         end

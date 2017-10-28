@@ -19,7 +19,7 @@ module LanguageServer
       begin
         json_body = parse_body(request)
       rescue JSONError => error
-        return build_error(status: 500, id: body[:id], code: -32700, message: error.to_s)
+        return build_error(status: 500, id: body[:id], code: -32_700, message: error.to_s)
       end
 
       begin
