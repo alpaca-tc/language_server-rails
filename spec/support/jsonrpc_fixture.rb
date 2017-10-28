@@ -28,7 +28,11 @@ Module.new do
   end
 
   def jsonrpc_fixture_path
-    Pathname.new(File.expand_path('../../fixtures/jsonrpc', __FILE__))
+    fixture_path.join('jsonrpc')
+  end
+
+  def fixture_path
+    Pathname.new(File.expand_path('../../fixtures', __FILE__))
   end
 
   RSpec.configure do |config|

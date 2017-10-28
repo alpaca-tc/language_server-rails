@@ -1,0 +1,14 @@
+{
+  "jsonrpc":"2.0",
+  "method":"textDocument/hover",
+  "id":1,
+  "params":{
+    "textDocument":{
+      "uri":"$FILE"
+    },
+    "position":{
+      "line":1,
+      "character":3
+    }
+  }
+}
