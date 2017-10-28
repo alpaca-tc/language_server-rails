@@ -4,7 +4,7 @@ RSpec.describe LanguageServerRails::ContentContext do
   let(:instance) { described_class.new(content, line, character) }
   let(:content) { LanguageServerRails::Content.new(uri) }
   let(:uri) { "file://#{fixture_path.join('content', 'module.rb')}" }
-  let(:line) { 0 }
+  let(:line) { 3 }
   let(:character) { 0 }
 
   describe '#cursor_text' do
