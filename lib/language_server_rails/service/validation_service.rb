@@ -1,4 +1,4 @@
-module LanguageServerJson
+module LanguageServerRails
   module Service
     class ValidationService < BaseService
       def do_validation

@@ -1,4 +1,4 @@
-module LanguageServerJson
+module LanguageServerRails
   module Service
     class InitializeService < BaseService
       def do_initialize

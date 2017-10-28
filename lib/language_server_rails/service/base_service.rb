@@ -1,6 +1,6 @@
 require 'language_server-protocol'
 
-module LanguageServerJson
+module LanguageServerRails
   module Service
     class BaseService
       Interface = LanguageServer::Protocol::Interface

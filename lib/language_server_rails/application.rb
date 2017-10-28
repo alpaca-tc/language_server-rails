@@ -3,7 +3,7 @@
 require 'rack'
 require 'rack/request'
 
-module LanguageServerJson
+module LanguageServerRails
   class Application
     # Rack interface
     def self.call(env)

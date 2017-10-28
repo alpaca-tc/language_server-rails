@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe LanguageServerJson::Application do
+RSpec.describe LanguageServerRails::Application do
   let(:env) do
     {
       LanguageServer::JsonRPCMiddleware::REQUEST_BODY => json

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'language_server_json'
+require 'language_server_rails'
 require 'pry' unless ENV['CI']
 
 Dir[File.join(File.expand_path('../support', __FILE__), '**', '*.rb')].each { |file| require(file) }
