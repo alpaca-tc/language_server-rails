@@ -37,7 +37,6 @@ module LanguageServerRails
       loop do
         serve(server.accept)
       end
-    rescue Interrupt
     end
 
     def serve(socket)
@@ -71,6 +70,7 @@ module LanguageServerRails
       client.write(data)
     end
 
+    # rubocop:disable Security/Eval
     def safe_eval(string)
       result = nil
 
@@ -83,6 +83,7 @@ module LanguageServerRails
 
       result
     end
+    # rubocop:enable Security/Eval
 
     def set_exit_hook
       at_exit { shutdown }
