@@ -23,7 +23,7 @@ module LanguageServer
       end
 
       begin
-        status, headers, body = @app.call(env)
+        _status, headers, body = @app.call(env)
         [200, headers, body]
       rescue MethodNotFound => error
         return build_error(
