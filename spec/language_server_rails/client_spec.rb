@@ -34,7 +34,7 @@ RSpec.describe LanguageServerRails::Client do
 
       it 'returns response' do
         # サーバーの起動を待ってみる
-        sleep(10) if subject === false
+        sleep(10) if subject == false
 
         expect(subject['id']).to eq(1)
         expect(subject['status']).to eq('success')
