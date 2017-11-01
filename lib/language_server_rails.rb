@@ -2,7 +2,6 @@
 
 require 'language_server'
 require 'language_server_rails/version'
-require 'logger'
 
 module LanguageServerRails
   autoload :Application, 'language_server_rails/application'
@@ -15,8 +14,4 @@ module LanguageServerRails
   autoload :BackgroundServer, 'language_server_rails/background_server'
   autoload :Path, 'language_server_rails/path'
   autoload :Server, 'language_server_rails/server'
-
-  def self.logger
-    @logger ||= Logger.new(STDOUT)
-  end
 end

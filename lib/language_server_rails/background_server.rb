@@ -5,6 +5,8 @@ require 'socket'
 
 module LanguageServerRails
   class BackgroundServer
+    STOP_TIMEOUT = 2 # seconds
+
     def initialize(project)
       @project = project
     end
@@ -29,17 +31,6 @@ module LanguageServerRails
       end
     end
 
-    private
-
-    def stop_server
-      server.close
-
-      @server = nil
-      @warmed_up = nil
-
-      stop
-    end
-
     def stop
       return unless server_running?
 
@@ -47,11 +38,19 @@ module LanguageServerRails
       kill('TERM')
       sleep(0.1) while server_running? && Time.now < timeout
 
-      kill 'KILL' if server_running?
+      kill('KILL') if server_running?
+    end
+
+    private
+
+    def pid
+      @project.configuration.pidfile_path.read.to_i if @project.configuration.pidfile_path.exist?
+    rescue Errno::ENOENT
+      # This can happen if the pidfile is removed after we check it
+      # exists
     end
 
     def kill(sig)
-      pid = self.pid
       Process.kill(sig, pid) if pid
     rescue Errno::ESRCH
       # already dead

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'pathname'
 require 'tempfile'
 require 'socket'
+require 'logger'
 require 'json'
 
 module LanguageServerRails
@@ -20,17 +22,27 @@ module LanguageServerRails
 
     private
 
+    def debug(message)
+      logger.debug("[server] #{message}")
+    end
+
+    def logger
+      @logger ||= Logger.new(STDOUT)
+    end
+
     def start_server
+      debug('boot server')
       server = UNIXServer.open(@socket_path.to_s)
 
       loop do
         serve(server.accept)
       end
+    rescue Interrupt
     end
 
     def serve(socket)
-      _app_client = socket.recv_io
       request = JSON.load(socket.read(socket.gets.to_i))
+      debug("serve socket #{request}")
       id, command, script = request.values_at('id', 'command', 'script')
 
       case command
@@ -46,9 +58,14 @@ module LanguageServerRails
       end
     rescue SocketError => error
       raise error unless socket.eof?
+    rescue => error
+      socket.close
+      puts error
     end
 
     def send_json(client, data)
+      debug("response #{data}")
+
       data = JSON.dump(data)
       client.puts(data.bytesize)
       client.write(data)

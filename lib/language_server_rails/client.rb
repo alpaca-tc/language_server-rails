@@ -4,9 +4,6 @@ require 'socket'
 
 module LanguageServerRails
   class Client
-    TIMEOUT = 1
-    STOP_TIMEOUT = 2 # seconds
-
     def initialize(project)
       @project = project
       @background_server = @project.background_server
@@ -23,6 +20,9 @@ module LanguageServerRails
       receive_json(socket)
     rescue Errno::ECONNRESET
       exit 1
+    rescue Errno::ENOENT
+      # During boot up server, or broken.
+      false
     ensure
       socket&.close
       @client = nil

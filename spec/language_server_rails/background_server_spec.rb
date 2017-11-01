@@ -7,8 +7,8 @@ RSpec.describe LanguageServerRails::BackgroundServer do
     let(:instance) { described_class.new(project) }
     let(:project) { LanguageServerRails::Project.new(__dir__) }
 
-    before do
-      FileUtils.rm(project.configuration.pidfile_path) if project.configuration.pidfile_path.exist?
+    after do
+      instance.stop
     end
 
     describe '#boot_server' do
