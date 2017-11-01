@@ -41,7 +41,7 @@ module LanguageServerRails
     end
 
     def serve(socket)
-      request = JSON.load(socket.read(socket.gets.to_i))
+      request = JSON.parse(socket.read(socket.gets.to_i))
       debug("serve socket #{request}")
       id, command, script = request.values_at('id', 'command', 'script')
 

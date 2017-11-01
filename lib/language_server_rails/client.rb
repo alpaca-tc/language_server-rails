@@ -41,7 +41,7 @@ module LanguageServerRails
     end
 
     def receive_json(socket)
-      JSON.load(socket.read(socket.gets.to_i))
+      JSON.parse(socket.read(socket.gets.to_i))
     end
   end
 end
