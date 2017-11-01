@@ -77,14 +77,14 @@ module LanguageServerRails
 
     def rails_project_command
       if File.exist?(@project.project_root.join('bin', 'rails'))
-        Shellwords.join([@project.project_root.join('bin', 'rails').to_s, 'runner']) + "'%{server_program}'"
+        Shellwords.join([@project.project_root.join('bin', 'rails').to_s, 'runner']) + "'%<server_program>s'"
       else
-        Shellwords.join(%w[bundle exec rails runner]) + ' %{server_program}'
+        Shellwords.join(%w[bundle exec rails runner]) + ' %<server_program>s'
       end
     end
 
     def ruby_project_command
-      %(ruby -e '%{server_program}')
+      %(ruby -e '%<server_program>s')
     end
   end
 end
