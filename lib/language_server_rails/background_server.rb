@@ -44,16 +44,15 @@ module LanguageServerRails
     private
 
     def pid
-      @project.configuration.pidfile_path.read.to_i if @project.configuration.pidfile_path.exist?
-    rescue Errno::ENOENT
-      # This can happen if the pidfile is removed after we check it
-      # exists
+      suppress(Errno::ENOENT) do
+        @project.configuration.pidfile_path.read.to_i if @project.configuration.pidfile_path.exist?
+      end
     end
 
     def kill(sig)
-      Process.kill(sig, pid) if pid
-    rescue Errno::ESRCH
-      # already dead
+      suppress(Errno::ENOENT) do
+        Process.kill(sig, pid) if pid
+      end
     end
 
     def background_server_command
