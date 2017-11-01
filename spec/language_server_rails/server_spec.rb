@@ -35,7 +35,6 @@ RSpec.describe LanguageServerRails::Server do
       end
 
       it 'executes eval command' do
-        client.send_io(STDOUT)
         send_json(id: 1, command: 'eval', script: 'Object.constants')
 
         subject.call
