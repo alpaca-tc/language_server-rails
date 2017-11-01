@@ -55,3 +55,9 @@ Lint/AssignmentInCondition:
   Enabled: false
 Performance:
   Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Lint/RescueWithoutErrorClass:
+  Enabled: false
