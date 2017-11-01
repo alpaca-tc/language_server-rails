@@ -84,7 +84,7 @@ module LanguageServerRails
     end
 
     def ruby_project_command
-      %{ruby -e '%{server_program}'}
+      %(ruby -e '%{server_program}')
     end
   end
 end

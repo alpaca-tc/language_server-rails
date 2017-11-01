@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe LanguageServerRails::Path do
   describe '.executable?' do
     context 'given unknown command' do
