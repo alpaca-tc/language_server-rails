@@ -17,10 +17,10 @@ module LanguageServerRails
     rescue Errno::ENOENT
       false
     ensure
-      return unless pidfile
-
-      pidfile.flock(File::LOCK_UN)
-      pidfile.close
+      if pidfile
+        pidfile.flock(File::LOCK_UN)
+        pidfile.close
+      end
     end
 
     def boot_server
