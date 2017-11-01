@@ -1,29 +1,30 @@
 # frozen_string_literal: true
 
 RSpec.describe LanguageServerRails::Project do
-  let(:instance) { described_class.new(rails_root) }
+  let(:instance) { described_class.new(project_root) }
+  let(:project_root) { __dir__ }
 
-  describe 'InstanceMethods' do
-    describe '#background_server_source' do
-      subject { instance.background_server_source }
+  describe '#background_server' do
+    subject { instance.background_server }
+    it { is_expected.to be_a(LanguageServerRails::BackgroundServer) }
+  end
 
-      before do
-        allow(instance).to receive(:rails?).and_return(rails?)
-        allow(instance).to receive(:plain_ruby?).and_return(plain_ruby?)
-      end
+  describe '#plain_ruby?' do
+    subject { instance.plain_ruby? }
+    it { is_expected.to be true }
+  end
 
-      let(:rails?) { false }
-      let(:plain_ruby?) { false }
+  describe '#rails?' do
+    subject { instance.rails? }
 
-      context 'when backend server is rails' do
-        let(:rails?) { true }
-        it { is_expected.to include('rails runner') }
-      end
+    context 'given ruby project' do
+      let(:project_root) { __dir__ }
+      it { is_expected.to be false }
+    end
 
-      context 'when backend server is rails' do
-        let(:plain_ruby?) { true }
-        it { is_expected.to start_with('ruby -e') }
-      end
+    context 'given rails project' do
+      let(:project_root) { rails_root }
+      it { is_expected.to be true }
     end
   end
 end
