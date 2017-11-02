@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - '.bundle'
     - '*.gemspec'
+    - 'spec/fixtures/**/*'
   TargetRubyVersion: 2.4
   DisplayCopNames: true
 
