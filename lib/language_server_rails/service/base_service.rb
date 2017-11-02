@@ -8,9 +8,10 @@ module LanguageServerRails
       Interface = LanguageServer::Protocol::Interface
       Constant = LanguageServer::Protocol::Constant
 
-      attr_reader :params
+      attr_reader :params, :project
 
-      def initialize(params)
+      def initialize(project, params)
+        @project = project
         @params = params
       end
     end

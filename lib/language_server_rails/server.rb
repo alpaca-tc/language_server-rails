@@ -27,7 +27,7 @@ module LanguageServerRails
     end
 
     def logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= Logger.new('/tmp/language_server_rails.log')
     end
 
     def start_server

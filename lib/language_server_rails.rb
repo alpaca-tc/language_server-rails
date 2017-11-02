@@ -14,4 +14,9 @@ module LanguageServerRails
   autoload :BackgroundServer, 'language_server_rails/background_server'
   autoload :Path, 'language_server_rails/path'
   autoload :Server, 'language_server_rails/server'
+  autoload :Method, 'language_server_rails/method'
+
+  def self.logger
+    @logger ||= Logger.new('/tmp/language_server_rails.log')
+  end
 end

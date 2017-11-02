@@ -8,6 +8,7 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 require 'language_server_rails'
 require 'language_server/json_rpc_middleware'
 require 'language_server/std_handler'
+require 'pry-remote'
 
 wrapped_app = [
   LanguageServer::JsonRPCMiddleware,

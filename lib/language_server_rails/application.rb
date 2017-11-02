@@ -14,16 +14,24 @@ module LanguageServerRails
       [200, {}, [body]]
     end
 
+    def self.project(project_root)
+      @projects ||= Hash.new { |h, k| h[k] = Project.new(k) }
+      @projects[project_root] if project_root
+    end
+
     def initialize(params = {})
+      LanguageServerRails.logger.debug("[client] #{params}")
       @params = params
     end
 
     def process
+      project = self.class.project(project_root)
+
       result = case @params[:method]
                when 'initialize'
-                 Service::InitializeService.new(@params).do_initialize
+                 Service::InitializeService.new(project, @params).do_initialize
                when 'textDocument/hover'
-                 Service::HoverService.new(@params).do_hover
+                 Service::HoverService.new(project, @params).do_hover
                when 'exit'
                  exit
                when 'textDocument/didChange', 'textDocument/didSave'
@@ -33,6 +41,7 @@ module LanguageServerRails
                end
 
       response_message = LanguageServer::Protocol::Interface::ResponseMessage.new(
+        jsonrpc: '2.0',
         id: @params[:id],
         result: result
       )
@@ -43,6 +52,12 @@ module LanguageServerRails
     rescue => error
       LanguageServer.logger.debug("error!!!: #{error}")
       raise
+    end
+
+    private
+
+    def project_root
+      @params.dig(:params, :rootUri)
     end
   end
 end
