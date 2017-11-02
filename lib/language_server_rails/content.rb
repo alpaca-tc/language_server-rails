@@ -16,8 +16,8 @@ module LanguageServerRails
       end
     end
 
-    def body
-      @body ||= case @uri.scheme
+    def read
+      @read ||= case @uri.scheme
                 when 'file'
                   File.read(@uri.path)
                 else
