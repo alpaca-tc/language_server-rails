@@ -50,6 +50,7 @@ module LanguageServer
       return [500, {}, [{ error: { code: code, message: message } }.to_json]] unless id
 
       result = LanguageServer::Protocol::Interface::ResponseMessage.new(
+        jsonrpc: '2.0',
         id: id,
         error: {
           code: code,
