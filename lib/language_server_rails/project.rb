@@ -13,6 +13,10 @@ module LanguageServerRails
       @configuration = Configuration.new(project_root)
     end
 
+    def client
+      @client ||= Client.new(self)
+    end
+
     def background_server
       @background_server ||= BackgroundServer.new(self)
     end

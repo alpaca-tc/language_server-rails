@@ -4,6 +4,11 @@ RSpec.describe LanguageServerRails::Project do
   let(:instance) { described_class.new(project_root) }
   let(:project_root) { __dir__ }
 
+  describe '#client' do
+    subject { instance.client }
+    it { is_expected.to be_a(LanguageServerRails::Client) }
+  end
+
   describe '#background_server' do
     subject { instance.background_server }
     it { is_expected.to be_a(LanguageServerRails::BackgroundServer) }
