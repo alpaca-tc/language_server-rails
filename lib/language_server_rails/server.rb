@@ -50,7 +50,7 @@ module LanguageServerRails
           socket,
           id: id,
           status: 'success',
-          data: safe_eval(script)
+          data: Utils.safe_eval(script)
         )
       else
         socket.close
@@ -69,21 +69,6 @@ module LanguageServerRails
       client.puts(data.bytesize)
       client.write(data)
     end
-
-    # rubocop:disable Security/Eval
-    def safe_eval(string)
-      result = nil
-
-      thread = Thread.start do
-        $SAFE = 1
-        result = eval(string)
-      end
-
-      thread.join
-
-      result
-    end
-    # rubocop:enable Security/Eval
 
     def set_exit_hook
       at_exit { shutdown }
