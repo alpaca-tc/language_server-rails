@@ -7,6 +7,7 @@ module LanguageServerRails
   autoload :Application, 'language_server_rails/application'
   autoload :Service, 'language_server_rails/service'
   autoload :Content, 'language_server_rails/content'
+  autoload :CodeObject, 'language_server_rails/code_object'
   autoload :Client, 'language_server_rails/client'
   autoload :Configuration, 'language_server_rails/configuration'
   autoload :ContentContext, 'language_server_rails/content_context'
@@ -15,6 +16,7 @@ module LanguageServerRails
   autoload :Path, 'language_server_rails/path'
   autoload :Server, 'language_server_rails/server'
   autoload :Method, 'language_server_rails/method'
+  autoload :Utils, 'language_server_rails/utils'
 
   def self.logger
     @logger ||= Logger.new('/tmp/language_server_rails.log')
