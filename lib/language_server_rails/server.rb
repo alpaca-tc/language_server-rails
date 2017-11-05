@@ -50,7 +50,7 @@ module LanguageServerRails
           socket,
           id: id,
           status: 'success',
-          data: Utils.safe_eval(script)
+          data: SafeEvaluator.safe_eval(script)
         )
       else
         socket.close

@@ -8,13 +8,13 @@ module LanguageServerRails
           return if string.nil? || string.empty?
 
           if /(?<context>.+)\#(?<method_name>\S+)\Z/.match(string)
-            object = Utils.safe_eval(Regexp.last_match[:context], current_binding)
+            object = SafeEvaluator.safe_eval(Regexp.last_match[:context], current_binding)
             from_class(object, Regexp.last_match[:method_name])
           elsif /(?<context>.+)(\[\])\Z/.match(string)
-            object = Utils.safe_eval(Regexp.last_match[:context], current_binding)
+            object = SafeEvaluator.safe_eval(Regexp.last_match[:context], current_binding)
             from_object(object, :[])
           elsif /(?<context>.+)(?:\.|::)(?<method_name>\S+)\Z/.match(string)
-            object = Utils.safe_eval(Regexp.last_match[:context], current_binding)
+            object = SafeEvaluator.safe_eval(Regexp.last_match[:context], current_binding)
             from_object(object, Regexp.last_match[:method_name])
           else
             from_class_or_object(current_binding.eval('self'), string)

@@ -47,28 +47,6 @@ RSpec.describe LanguageServerRails::Server do
       end
     end
 
-    describe '#safe_eval' do
-      subject do
-        -> { instance.__send__(:safe_eval, string) }
-      end
-
-      context 'given safe string' do
-        let(:string) { 'Object.constants' }
-
-        it 'evaluates the string' do
-          expect(subject.call).to eq(Object.constants)
-        end
-      end
-
-      context 'given dangerous string' do
-        let(:string) { "FileUtils.delete('#{configuration.socket_path}')" }
-
-        it 'prevent to evaluate the string' do
-          is_expected.to raise_error(SecurityError)
-        end
-      end
-    end
-
     describe '#shutdown' do
       subject do
         -> { instance.__send__(:shutdown) }
