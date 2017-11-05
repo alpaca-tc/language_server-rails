@@ -4,14 +4,21 @@ module LanguageServerRails
   class WrappedMethod
     METHOD_DETECTORS = {
       :[] => /(.+)(\[\])\Z/,
-      method: /(.+)(?:\.|::)(\S+)\Z/
+      method: /(.+)(?:\.|::)(\S+)\Z/,
+      instance_method: /(.+)\#(\S+)\Z/
     }.freeze
 
     class << self
       def from_string(string, current_binding = TOPLEVEL_BINDING)
         return if string.nil? || string.empty?
 
-        if METHOD_DETECTORS[:[]].match(string)
+        if METHOD_DETECTORS[:instance_method].match(string)
+          context = Regexp.last_match(1)
+          method_name = Regexp.last_match(2)
+          object = Utils.safe_eval(context, current_binding)
+
+          from_class(object, method_name, current_binding)
+        elsif METHOD_DETECTORS[:[]].match(string)
           context = Regexp.last_match(1)
           method_name = Regexp.last_match(2)
           object = Utils.safe_eval(context, current_binding)

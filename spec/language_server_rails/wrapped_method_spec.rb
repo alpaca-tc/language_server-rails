@@ -26,6 +26,11 @@ RSpec.describe LanguageServerRails::WrappedMethod do
         it { is_expected.to be_a(described_class) }
       end
 
+      context 'given Array#push' do
+        let(:string) { 'Array#push' }
+        it { is_expected.to be_a(described_class) }
+      end
+
       context 'given ::Object' do
         let(:string) { '::Object' }
         it { is_expected.to be_nil }
