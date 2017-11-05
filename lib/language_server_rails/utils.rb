@@ -4,13 +4,12 @@ require 'thread'
 
 module LanguageServerRails
   module Utils
-    # rubocop:disable Security/Eval
-    def self.safe_eval(string)
+    def self.safe_eval(string, current_binding = TOPLEVEL_BINDING)
       result = nil
 
       thread = Thread.start do
         $SAFE = 1
-        result = eval(string)
+        result = current_binding.eval(string)
       end
 
       thread.join
