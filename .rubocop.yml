@@ -20,6 +20,8 @@ Metrics/ModuleLength:
   Max: 300
 Metrics/AbcSize:
   Max: 29
+Metrics/CyclomaticComplexity:
+  MAX: 10
 Style/BlockDelimiters:
   Enabled: false
 Style/Lambda:
