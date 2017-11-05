@@ -7,7 +7,7 @@ module LanguageServerRails
     end
 
     def initialize(wrapped_module)
-      raise ArgumentError, "a non-module #{wrapped_module}" unless ::Module === wrapped_module
+      raise ArgumentError, "a non-module #{wrapped_module}" unless wrapped_module.is_a?(::Module)
       @wrapped_module = wrapped_module
     end
   end
