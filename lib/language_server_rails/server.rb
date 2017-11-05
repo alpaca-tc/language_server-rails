@@ -40,9 +40,9 @@ module LanguageServerRails
     end
 
     def serve(socket)
-      request = JSON.parse(socket.read(socket.gets.to_i))
+      request = JSON.parse(socket.read(socket.gets.to_i), symbolize_names: true)
       debug("serve socket #{request}")
-      id, command, script = request.values_at('id', 'command', 'script')
+      id, command, script = request.values_at(:id, :command, :script)
 
       case command
       when 'eval'
@@ -50,16 +50,17 @@ module LanguageServerRails
           socket,
           id: id,
           status: 'success',
-          data: SafeEvaluator.safe_eval(script)
+          data: eval(script)
         )
       else
         socket.close
       end
     rescue SocketError => error
+      logger.error("[server] socket error : #{error}")
       raise error unless socket.eof?
     rescue => error
+      logger.error("[server] error : #{error}")
       socket.close
-      puts error
     end
 
     def send_json(client, data)

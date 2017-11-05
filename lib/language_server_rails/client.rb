@@ -41,7 +41,11 @@ module LanguageServerRails
     end
 
     def receive_json(socket)
-      JSON.parse(socket.read(socket.gets.to_i))
+      i = socket.gets.to_i
+      content = socket.read(i)
+
+      LanguageServer.logger.debug("[client][response] #{content}")
+      JSON.parse(content, symbolize_names: true)
     end
   end
 end
