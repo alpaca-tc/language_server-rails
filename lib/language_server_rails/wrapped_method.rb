@@ -2,48 +2,37 @@
 
 module LanguageServerRails
   class WrappedMethod
-    METHOD_DETECTORS = {
-      :[] => /(.+)(\[\])\Z/,
-      method: /(.+)(?:\.|::)(\S+)\Z/,
-      instance_method: /(.+)\#(\S+)\Z/
-    }.freeze
-
     class << self
       def from_string(string, current_binding = TOPLEVEL_BINDING)
         return if string.nil? || string.empty?
 
-        if METHOD_DETECTORS[:instance_method].match(string)
-          context = Regexp.last_match(1)
-          method_name = Regexp.last_match(2)
-          object = Utils.safe_eval(context, current_binding)
-
-          from_class(object, method_name, current_binding)
-        elsif METHOD_DETECTORS[:[]].match(string)
-          context = Regexp.last_match(1)
-          method_name = Regexp.last_match(2)
-          object = Utils.safe_eval(context, current_binding)
-
-          from_object(object, method_name, current_binding)
-        elsif METHOD_DETECTORS[:method].match(string)
-          context = Regexp.last_match(1)
-          method_name = Regexp.last_match(2)
-          object = Utils.safe_eval(context, current_binding)
-
-          from_object(object, method_name, current_binding)
+        if /(?<context>.+)\#(?<method_name>\S+)\Z/.match(string)
+          object = Utils.safe_eval(Regexp.last_match[:context], current_binding)
+          from_class(object, Regexp.last_match[:method_name])
+        elsif /(?<context>.+)(\[\])\Z/.match(string)
+          object = Utils.safe_eval(Regexp.last_match[:context], current_binding)
+          from_object(object, :[])
+        elsif /(?<context>.+)(?:\.|::)(?<method_name>\S+)\Z/.match(string)
+          object = Utils.safe_eval(Regexp.last_match[:context], current_binding)
+          from_object(object, Regexp.last_match[:method_name])
         else
-          from_class(current_binding.eval('self'), string, current_binding) || from_object(current_binding.eval('self'), string, current_binding)
+          from_class_or_object(current_binding.eval('self'), string)
         end
       end
 
       private
 
-      def from_object(object, string, _current_binding = TOPLEVEL_BINDING)
+      def from_class_or_object(object, string)
+        from_class(object, string) || from_object(object, string)
+      end
+
+      def from_object(object, string)
         new(lookup_method_via_binding(object, string, :method))
       rescue
         nil
       end
 
-      def from_class(klass, name, _current_binding = TOPLEVEL_BINDING)
+      def from_class(klass, name)
         new(lookup_method_via_binding(klass, name, :instance_method))
       rescue
         nil
