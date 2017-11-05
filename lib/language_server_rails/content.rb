@@ -16,6 +16,15 @@ module LanguageServerRails
       end
     end
 
+    def path
+      case @uri.scheme
+      when 'file'
+        @uri.path
+      else
+        raise NotImplementedError, 'not implemented yet'
+      end
+    end
+
     def read
       @read ||= case @uri.scheme
                 when 'file'
