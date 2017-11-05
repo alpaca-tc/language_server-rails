@@ -7,6 +7,7 @@ module LanguageServerRails
     ASSIGNMENT_TYPES = %i[lvasgn ivasgn gvasgn cvasgn casgn].freeze
     # PURE_OBJECT_TYPES = %i[int str dstr sym dsym regexp array hash].freeze
     PURE_OBJECT_TYPES = %i[int str sym regexp].freeze
+    NodeDefinition = Struct.new(:node, :range)
 
     attr_reader :content, :line_no, :location_line_no, :character_no
 
@@ -22,8 +23,14 @@ module LanguageServerRails
       cursor_range&.source
     end
 
+    def cursor_context
+      return unless cursor_node_definition
+
+      node = cursor_node_definition.node
+    end
+
     def cursor_range
-      cursor_node_definition&.fetch(:range)
+      cursor_node_definition&.range
     end
 
     private
@@ -112,10 +119,7 @@ module LanguageServerRails
           # binding.pry if current_line?(node.location) && defined?(RSpec)
 
           if current_range = ranges.find { |range| current_line?(range) && current_character?(range) }
-            return {
-              node: node,
-              range: current_range
-            }
+            return NodeDefinition.new(node, current_range)
           else
             next_nodes += node.children
           end
