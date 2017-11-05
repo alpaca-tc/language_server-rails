@@ -14,7 +14,7 @@ module LanguageServerRails
     end
 
     def client
-      @client ||= Client.new(self)
+      Client.new(self)
     end
 
     def background_server
@@ -25,8 +25,16 @@ module LanguageServerRails
       true
     end
 
+    def gem?
+      !gemspec_path.nil?
+    end
+
     def rails?
       File.exist?(project_root.join('config.ru')) && File.exist?(project_root.join('config/application.rb'))
+    end
+
+    def gemspec_path
+      Dir.glob(project_root.join('*.gemspec')).first
     end
   end
 end

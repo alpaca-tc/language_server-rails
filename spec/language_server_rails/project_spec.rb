@@ -19,6 +19,20 @@ RSpec.describe LanguageServerRails::Project do
     it { is_expected.to be true }
   end
 
+  describe '#gem?' do
+    subject { instance.gem? }
+
+    context 'given ruby project' do
+      let(:project_root) { __dir__ }
+      it { is_expected.to be false }
+    end
+
+    context 'given gem project' do
+      let(:project_root) { Pathname.new(File.expand_path('../../../', __FILE__)) }
+      it { is_expected.to be true }
+    end
+  end
+
   describe '#rails?' do
     subject { instance.rails? }
 
