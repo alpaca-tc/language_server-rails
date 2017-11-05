@@ -46,8 +46,8 @@ module LanguageServerRails
       end
     end
 
-    def initialize(module_or_class)
-      @module_or_class = module_or_class
+    def initialize(wrapped)
+      @wrapped = wrapped
     end
 
     # def definition_source_location
