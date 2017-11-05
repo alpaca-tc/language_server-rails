@@ -15,13 +15,24 @@ module LanguageServerRails
     private
 
     def simple_string_lookup
-      object = SafeEvaluator.safe_eval(string)
+      return unless SafeEvaluator.no_side_effect?(@string)
+      return if instance_method?
+
+      object = begin
+                 SafeEvaluator.safe_eval(string)
+               rescue
+                 return
+               end
 
       if object.respond_to?(:source_location)
         Wrapped::WrappedMethod.new(object)
       elsif !object.is_a?(Module)
         Wrapped::WrappedModule.new(object.class)
       end
+    end
+
+    def instance_method?
+      @string =~ /\S#\S/
     end
 
     def class_or_method_lookup

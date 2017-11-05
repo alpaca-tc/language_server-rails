@@ -16,6 +16,21 @@ RSpec.describe LanguageServerRails::CodeObject do
         let(:string) { 'LanguageServerRails::CodeObject' }
         it { is_expected.to be_a(LanguageServerRails::Wrapped::WrappedModule) }
       end
+
+      context 'given Object.new' do
+        let(:string) { 'Object.new' }
+        it { is_expected.to be_a(LanguageServerRails::Wrapped::WrappedMethod) }
+      end
+
+      context 'given "string"' do
+        let(:string) { '"string"' }
+        it { is_expected.to be_nil }
+      end
+
+      context 'given unknown' do
+        let(:string) { 'unknown' }
+        it { is_expected.to be_nil }
+      end
     end
   end
 end
