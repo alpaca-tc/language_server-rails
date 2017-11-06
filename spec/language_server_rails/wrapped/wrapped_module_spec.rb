@@ -10,11 +10,13 @@ RSpec.describe LanguageServerRails::Wrapped::WrappedModule do
   end
 
   describe 'InstanceMethods' do
-    subject { described_class.new(wrapped) }
+    describe '#initialize' do
+      subject { described_class.new(wrapped) }
 
-    context 'with non-module' do
-      let(:wrapped) { 1 }
-      it { expect { subject }.to raise_error(ArgumentError) }
+      context 'with non-module' do
+        let(:wrapped) { 1 }
+        it { expect { subject }.to raise_error(ArgumentError) }
+      end
     end
   end
 end
