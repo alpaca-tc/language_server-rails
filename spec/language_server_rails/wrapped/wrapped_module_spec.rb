@@ -4,8 +4,16 @@ RSpec.describe LanguageServerRails::Wrapped::WrappedModule do
   describe 'ClassMethods' do
     describe '.from_string' do
       subject { described_class.from_string(string) }
-      let(:string) { 'LanguageServerRails' }
-      it { is_expected.to be_a(described_class) }
+
+      context 'given simple module name' do
+        let(:string) { 'LanguageServerRails' }
+        it { is_expected.to be_a(described_class) }
+      end
+
+      context 'given recursive module name' do
+        let(:string) { 'LanguageServerRails::Service::DefinitionService::Content' }
+        it { is_expected.to be_a(described_class) }
+      end
     end
   end
 

@@ -3,10 +3,49 @@
 module LanguageServerRails
   class Wrapped
     class WrappedModule < Wrapped
-      def self.from_string(string, current_binding = TOPLEVEL_BINDING)
-        WrappedModule.new(SafeEvaluator.safe_eval(string, current_binding)) if SafeEvaluator.no_side_effect?(string, current_binding)
-      rescue SafeEvaluator::SafeEvaluatorError
-        nil
+      class << self
+        def from_string(string, current_binding = TOPLEVEL_BINDING)
+          return unless SafeEvaluator.no_side_effect?(string, current_binding)
+          from_direct(string, current_binding) || from_namespace(string, current_binding)
+        end
+
+        private
+
+        def from_direct(string, current_binding)
+          WrappedModule.new(SafeEvaluator.safe_eval(string, current_binding))
+        rescue SafeEvaluator::SafeEvaluatorError
+          nil
+        end
+
+        def from_namespace(string, current_binding)
+          *namespaces, _unused_colon, name = string.split(/(::)(?=[^:]+)/)
+          namespaces = namespaces.reject { |string| string == '::' }
+
+          return if namespaces.empty? || name.nil?
+
+          parent_namespace, *children = namespaces
+          parent_namespace = "::#{parent}" if string.start_with?('::')
+
+          candidates = [parent_namespace]
+
+          candidates += children.map do |string|
+            parent_namespace += "::#{string}"
+            parent_namespace
+          end
+
+          candidates.reverse.each do |candidate|
+            result = begin
+                       SafeEvaluator.safe_eval("#{candidate}.const_get(:#{name})", current_binding)
+                     rescue SafeEvaluator::SafeEvaluatorError
+                       nil
+                     end
+            return WrappedModule.new(result) if result
+          end
+
+          nil
+        rescue SafeEvaluator::SafeEvaluatorError
+          return nil
+        end
       end
 
       def initialize(wrapped)
