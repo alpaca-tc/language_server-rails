@@ -18,24 +18,36 @@ module LanguageServerRails
         return if candidates.empty?
 
         file, line = candidates.first.source_location
-        definition_line = module_definition_line(file, line)
+        definition_line, character = module_definition_location(file, line)
 
-        [file, definition_line]
+        if definition_line && character
+          [file] + module_definition_location(file, line)
+        else
+          # definition not found
+          [file, line, 0]
+        end
       end
 
       private
 
-      def module_definition_line(file, max_line)
+      def module_definition_location(file, max_line)
         lines = File.foreach(file).first(max_line - 1)
         name = wrapped.name.split('::').last.strip
         module_or_class = wrapped.class.to_s.downcase
 
-        regexp = Regexp.union([
-                                /^\s*#{module_or_class}\s+((\w*)::)*?#{name}/,
-                                /^\s*(::)?#{name}\.(#{module_or_class}|instance)_eval/
-                              ])
+        regexps = [
+          /^\s*#{module_or_class}\s+((\w*)::)*?#{name}/,
+          /^\s*(::)?#{name}\.(#{module_or_class}|instance)_eval/
+        ]
 
-        lines.rindex { |line| regexp.match?(line) }.to_i + 1
+        regexp = Regexp.union(regexps)
+
+        lines.each_with_index do |line, index|
+          next unless regexp.match?(line)
+          return [index, line.index(name)]
+        end
+
+        nil
       end
 
       def candidates

@@ -22,9 +22,12 @@ RSpec.describe LanguageServerRails::Wrapped::WrappedModule do
     describe '#source_location' do
       subject { instance.source_location }
       let(:instance) { described_class.new(described_class) }
+      let(:file) { File.expand_path('../../../../lib/language_server_rails/wrapped/wrapped_module.rb', __FILE__) }
+      let(:line) { 4 } # line of `class WrappedModule < Wrapped`
+      let(:character) { 10 } # character of `WrappedModule < Wrapped`
 
       it 'returns source_location' do
-        subject
+        is_expected.to eq([file, line, character])
       end
     end
   end
