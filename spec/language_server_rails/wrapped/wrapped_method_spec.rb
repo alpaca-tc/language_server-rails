@@ -43,9 +43,16 @@ RSpec.describe LanguageServerRails::Wrapped::WrappedMethod do
       subject { instance.source_location }
       let(:instance) { described_class.new(wrapped) }
       let(:wrapped) { described_class.instance_method(:source_location) }
+      let(:source_location) { wrapped.source_location }
+      let(:character) do
+        path, line = source_location
+        definition = File.readlines(path)[line - 1]
+        definition.index('source_location')
+      end
 
       it 'returns source_location' do
-        is_expected.to eq(wrapped.source_location)
+        path, line = source_location
+        is_expected.to eq([path, line, character])
       end
     end
   end

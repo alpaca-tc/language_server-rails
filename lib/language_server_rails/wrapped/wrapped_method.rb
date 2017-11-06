@@ -50,7 +50,12 @@ module LanguageServerRails
       end
 
       def source_location
-        wrapped.source_location
+        path, line = wrapped.source_location
+        definition = File.readlines(path)[line - 1]
+
+        character = definition.index(wrapped.name.to_s)
+
+        [path, line, character]
       end
 
       # def definition_source_location
