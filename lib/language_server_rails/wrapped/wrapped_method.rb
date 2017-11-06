@@ -19,6 +19,8 @@ module LanguageServerRails
           else
             from_class_or_object(current_binding.eval('self'), string)
           end
+        rescue SafeEvaluator::SafeEvaluatorError
+          nil
         end
 
         private

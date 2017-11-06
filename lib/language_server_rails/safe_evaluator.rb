@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'thread'
-
 module LanguageServerRails
   module SafeEvaluator
+    class SafeEvaluatorError < StandardError; end
+
     NO_SIDE_EFFECT_EXPRESSION = /variable|constant/
 
     def self.no_side_effect?(string, current_binding = TOPLEVEL_BINDING)
@@ -19,12 +19,14 @@ module LanguageServerRails
       thread = Thread.start do
         $SAFE = 1
         result = current_binding.eval(string)
+        # rubocop:enable Security/Eval
       end
 
       thread.join
 
       result
+    rescue => error
+      raise SafeEvaluatorError, error.message
     end
-    # rubocop:enable Security/Eval
   end
 end
