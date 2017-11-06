@@ -18,5 +18,14 @@ RSpec.describe LanguageServerRails::Wrapped::WrappedModule do
         it { expect { subject }.to raise_error(ArgumentError) }
       end
     end
+
+    describe '#source_location' do
+      subject { instance.source_location }
+      let(:instance) { described_class.new(described_class) }
+
+      it 'returns source_location' do
+        subject
+      end
+    end
   end
 end
