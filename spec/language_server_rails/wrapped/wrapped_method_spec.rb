@@ -38,7 +38,17 @@ RSpec.describe LanguageServerRails::Wrapped::WrappedMethod do
     end
   end
 
-  # describe 'InstanceMethods' do
+  describe 'InstanceMethods' do
+    describe '#source_location' do
+      subject { instance.source_location }
+      let(:instance) { described_class.new(wrapped) }
+      let(:wrapped) { described_class.instance_method(:source_location) }
+
+      it 'returns source_location' do
+        is_expected.to eq(wrapped.source_location)
+      end
+    end
+  end
   #   describe '#definition_source_location' do
   #     subject { instance.definition_source_location }
   #     let(:instance) { described_class.new(class_or_module) }
