@@ -44,6 +44,17 @@ module LanguageServerRails
       debug("serve socket #{request}")
       id, command, script = request.values_at(:id, :command, :script)
 
+      process(id, command, script, socket)
+    rescue SocketError => error
+      logger.error("[server] socket error : #{error}")
+      raise error unless socket.eof?
+    rescue => error
+      logger.error("[server] error : #{error}")
+      socket.close
+    end
+
+    # rubocop:disable Security/Eval
+    def process(id, command, script, socket)
       case command
       when 'eval'
         send_json(
@@ -52,16 +63,22 @@ module LanguageServerRails
           status: 'success',
           data: eval(script)
         )
+      when 'find_definition'
+        code_object = LanguageServerRails::CodeObject.new(script)
+        wrapped = code_object.lookup
+        status = wrapped ? 'success' : 'failed'
+
+        send_json(
+          socket,
+          id: id,
+          status: status,
+          data: wrapped&.source_location
+        )
       else
         socket.close
       end
-    rescue SocketError => error
-      logger.error("[server] socket error : #{error}")
-      raise error unless socket.eof?
-    rescue => error
-      logger.error("[server] error : #{error}")
-      socket.close
     end
+    # rubocop:enable Security/Eval
 
     def send_json(client, data)
       debug("response #{data}")

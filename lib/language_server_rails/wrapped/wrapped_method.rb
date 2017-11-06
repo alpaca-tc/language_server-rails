@@ -49,8 +49,8 @@ module LanguageServerRails
         end
       end
 
-      def initialize(wrapped)
-        @wrapped = wrapped
+      def source_location
+        wrapped.source_location
       end
 
       # def definition_source_location
