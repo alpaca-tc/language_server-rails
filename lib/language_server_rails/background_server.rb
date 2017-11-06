@@ -9,6 +9,7 @@ module LanguageServerRails
 
     def initialize(project)
       @project = project
+      hook_at_exit
     end
 
     def server_running?
@@ -43,21 +44,27 @@ module LanguageServerRails
 
     private
 
+    def hook_at_exit
+      at_exit { stop }
+    end
+
     def pid
-      suppress(Errno::ENOENT) do
-        @project.configuration.pidfile_path.read.to_i if @project.configuration.pidfile_path.exist?
-      end
+      @project.configuration.pidfile_path.read.to_i if @project.configuration.pidfile_path.exist?
+    rescue Errno::ENOENT
+      nil
     end
 
     def kill(sig)
-      suppress(Errno::ENOENT) do
-        Process.kill(sig, pid) if pid
-      end
+      Process.kill(sig, pid) if pid
+    rescue Errno::ENOENT
+      nil
     end
 
     def background_server_command
       if @project.rails?
         format(rails_project_command, server_program: server_program)
+      elsif @project.gem?
+        format(gem_project_command, server_program: server_program)
       elsif @project.plain_ruby?
         format(ruby_project_command, server_program: server_program)
       end
@@ -80,6 +87,11 @@ module LanguageServerRails
       else
         Shellwords.join(%w[bundle exec rails runner]) + ' %<server_program>s'
       end
+    end
+
+    def gem_project_command
+      specification = Gem::Specification.load(@project.gemspec_path)
+      %(ruby -e 'require "bundler/setup"; require "#{specification.name}"; %<server_program>s')
     end
 
     def ruby_project_command
