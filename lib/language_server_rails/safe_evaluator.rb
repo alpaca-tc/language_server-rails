@@ -30,7 +30,7 @@ module LanguageServerRails
       end
 
       result
-    rescue TimeoutError, SecurityError => error
+    rescue Timeout::Error, SecurityError => error
       raise SafeEvaluatorError, error.message
     rescue => error
       raise SafeEvaluatorError, error.message
