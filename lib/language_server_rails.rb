@@ -17,6 +17,8 @@ module LanguageServerRails
   autoload :Server, 'language_server_rails/server'
   autoload :SafeEvaluator, 'language_server_rails/safe_evaluator'
   autoload :Wrapped, 'language_server_rails/wrapped'
+  autoload :ServerCommand, 'language_server_rails/server_command'
+  autoload :SourceCode, 'language_server_rails/source_code'
 
   def self.logger
     @logger ||= Logger.new('/tmp/language_server_rails.log')

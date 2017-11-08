@@ -12,6 +12,11 @@ RSpec.describe LanguageServerRails::CodeObject do
         it { is_expected.to be_a(LanguageServerRails::Wrapped::WrappedMethod) }
       end
 
+      context 'given instance method' do
+        let(:string) { 'LanguageServerRails::Service::DefinitionService#logger' }
+        fit { binding.pry; is_expected.to be_a(LanguageServerRails::Wrapped::WrappedMethod) }
+      end
+
       context 'given module' do
         let(:string) { 'LanguageServerRails::CodeObject' }
         it { is_expected.to be_a(LanguageServerRails::Wrapped::WrappedModule) }

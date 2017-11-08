@@ -2,6 +2,7 @@
 
 require 'rack'
 require 'rack/request'
+require 'uri'
 
 module LanguageServerRails
   class Application
@@ -15,8 +16,7 @@ module LanguageServerRails
     end
 
     def self.project(project_root)
-      @projects ||= Hash.new { |h, k| h[k] = Project.new(k) }
-      @projects[project_root] if project_root
+      @project ||= Project.new(LanguageServerRails::Content.new(project_root).path)
     end
 
     def initialize(params = {})
@@ -32,7 +32,10 @@ module LanguageServerRails
                  Service::InitializeService.new(project, @params).do_initialize
                when 'textDocument/hover'
                  Service::HoverService.new(project, @params).do_hover
+               when 'textDocument/definition'
+                 Service::DefinitionService.new(project, @params).do_definition
                when 'exit'
+                 LanguageServerRails.logger.debug('[application] exit')
                  exit
                when 'textDocument/didChange', 'textDocument/didSave'
                  raise LanguageServer::MethodNotFound, "not supported method given #{@params[:method]}"

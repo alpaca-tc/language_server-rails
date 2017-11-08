@@ -80,12 +80,11 @@ RSpec.describe LanguageServerRails::Server do
 
       describe 'given find_definition command' do
         let(:command) { 'find_definition' }
-        let(:script) { 'GemspecSample::ForDefinitionFinder#please_find_me' }
         let(:lib_dir) { gemspec_sample_root.join('lib').to_s }
 
         before do
           $LOAD_PATH.unshift(lib_dir)
-          require 'gemspec_sample'
+          load "#{lib_dir}/gemspec_sample.rb"
         end
 
         after do
@@ -93,12 +92,34 @@ RSpec.describe LanguageServerRails::Server do
           Object.__send__(:remove_const, :GemspecSample)
         end
 
-        it 'finds definition' do
-          is_expected.to eq(
-            id: 1,
-            status: 'success',
-            data: GemspecSample::ForDefinitionFinder.instance_method(:please_find_me).source_location
-          )
+        context 'given method name' do
+          let(:script) { 'GemspecSample::ForDefinitionFinder#please_find_me' }
+
+          it 'finds definition' do
+            is_expected.to eq(
+              id: 1,
+              status: 'success',
+              data: GemspecSample::ForDefinitionFinder.instance_method(:please_find_me).source_location
+            )
+          end
+        end
+
+        context 'given const name' do
+          let(:script) { 'GemspecSample::ForDefinitionFinder' }
+          let(:instance_methods) { GemspecSample::ForDefinitionFinder.instance_methods(false) }
+          let(:const_file) { GemspecSample::ForDefinitionFinder.instance_method(instance_methods.first).source_location[0] }
+
+          it 'finds definition' do
+            lines = File.read(const_file).split("\n")
+            line = lines.find { |line| line =~ /class ForDefinitionFinder/ }
+            line = lines.index(line)
+
+            is_expected.to eq(
+              id: 1,
+              status: 'success',
+              data: [const_file, line]
+            )
+          end
         end
       end
     end

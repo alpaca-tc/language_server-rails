@@ -9,11 +9,14 @@ module LanguageServerRails
     TIMEOUT = 0.5 # sec
     NO_SIDE_EFFECT_EXPRESSION = /variable|constant/
 
-    def self.no_side_effect?(string, current_binding = TOPLEVEL_BINDING)
-      expression = current_binding.eval("defined?(#{string})")
-      expression == 'self' || NO_SIDE_EFFECT_EXPRESSION.match?(expression)
-    rescue SyntaxError
-      false
+    def self.no_side_effect?(_string, _current_binding = TOPLEVEL_BINDING)
+      true
+
+      # FIXME: how can i check this?
+      #   expression = current_binding.eval("defined?(#{string})")
+      #   expression == 'self' || NO_SIDE_EFFECT_EXPRESSION.match?(expression)
+      # rescue SyntaxError
+      #   false
     end
 
     def self.safe_eval(string, current_binding = TOPLEVEL_BINDING)

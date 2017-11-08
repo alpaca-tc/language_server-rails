@@ -7,7 +7,8 @@ module LanguageServerRails
     ASSIGNMENT_TYPES = %i[lvasgn ivasgn gvasgn cvasgn casgn].freeze
     # PURE_OBJECT_TYPES = %i[int str dstr sym dsym regexp array hash].freeze
     PURE_OBJECT_TYPES = %i[int str sym regexp].freeze
-    NodeDefinition = Struct.new(:node, :range)
+    NodeDefinition = Struct.new(:node, :range, :parent_nodes)
+    NAMESPACE_TYPES = %i[module class].freeze
 
     attr_reader :content, :line_no, :location_line_no, :character_no
 
@@ -26,7 +27,22 @@ module LanguageServerRails
     def cursor_context
       return unless cursor_node_definition
 
-      node = cursor_node_definition.node
+      context_names = cursor_node_definition.parent_nodes.map do |node|
+        node.location.name.source
+      end
+
+      case cursor_node_definition.node.type
+      when :def
+        "#{context_names.join('::')}##{cursor_text}"
+      when :send
+        if cursor_node_definition.node.children[0]&.type == :const
+          "#{context_names.join('::')}::#{cursor_node_definition.node.children[0].location.name.source}.#{cursor_text}"
+        else
+          "#{context_names.join('::')}##{cursor_text}"
+        end
+      else
+        "#{context_names.join('::')}::#{cursor_text}"
+      end
     end
 
     def cursor_range
@@ -105,23 +121,32 @@ module LanguageServerRails
       end
     end
 
+    def namespace?(node)
+      NAMESPACE_TYPES.include?(node.type)
+    end
+
     def find_cursor_definition(parent_node)
-      nodes = [parent_node]
+      nodes = [[[], [parent_node]]]
 
       until nodes.empty?
         next_nodes = []
 
-        nodes.each do |node|
-          next unless node.is_a?(Parser::AST::Node)
-          next unless include_line?(node.location)
+        nodes.each do |(parents, children)|
+          children.each do |node|
+            next unless node.is_a?(Parser::AST::Node)
+            next unless include_line?(node.location)
 
-          ranges = extract_ranges_from_map(node.location).compact
-          # binding.pry if current_line?(node.location) && defined?(RSpec)
+            ranges = extract_ranges_from_map(node.location).compact
+            # binding.pry if current_line?(node.location) && defined?(RSpec)
 
-          if current_range = ranges.find { |range| current_line?(range) && current_character?(range) }
-            return NodeDefinition.new(node, current_range)
-          else
-            next_nodes += node.children
+            if current_range = ranges.find { |range| current_line?(range) && current_character?(range) }
+              return NodeDefinition.new(node, current_range, parents)
+            else
+              parent_nodes = parents
+              parent_nodes += [node] if namespace?(node)
+
+              next_nodes.push([parent_nodes, node.children])
+            end
           end
         end
 

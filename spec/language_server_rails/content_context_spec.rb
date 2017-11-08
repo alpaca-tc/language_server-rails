@@ -72,7 +72,10 @@ RSpec.describe LanguageServerRails::ContentContext do
 
       context 'feed_manager.rb' do
         let(:uri) { "file://#{fixture_path.join('mastodon_samples', 'feed_manager.rb')}" }
-        it_behaves_like 'a cursor context', line: 10, character: 2, text: 'FeedManager::REBLOG_FALLOFF'
+        # it_behaves_like 'a cursor context', line: 10, character: 2, text: 'FeedManager::REBLOG_FALLOFF'
+        # it_behaves_like 'a cursor context', line: 18, character: 6, text: 'FeedManager#filter?'
+        # it_behaves_like 'a cursor context', line: 31, character: 4, text: 'FeedManager#trim'
+        it_behaves_like 'a cursor context', line: 33, character: 21, text: 'PushUpdateWorker.perform_async'
       end
     end
   end

@@ -5,6 +5,11 @@ require 'tempfile'
 require 'socket'
 require 'logger'
 require 'json'
+require_relative './safe_evaluator'
+require_relative './code_object'
+require_relative './wrapped'
+require_relative './wrapped/wrapped_method'
+require_relative './wrapped/wrapped_module'
 
 module LanguageServerRails
   class Server
